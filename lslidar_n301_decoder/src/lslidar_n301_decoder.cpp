@@ -143,27 +143,28 @@ void LslidarN301Decoder::publishPointCloud() {
     point_cloud->header.frame_id = child_frame_id;
     point_cloud->height = 1;
 
-    for (size_t i = 0; i < 16; ++i) {
-        const lslidar_n301_msgs::LslidarN301Scan& scan = sweep_data->scans[i];
-        // The first and last point in each scan is ignored, which
-        // seems to be corrupted based on the received data.
-        // TODO: The two end points should be removed directly
-        //    in the scans.
-        if (scan.points.size() == 0) continue;
-        size_t j;
-        for (j = 1; j < scan.points.size()-1; ++j) {
+    // for (size_t i = 0; i < 16; ++i) {
+    const lslidar_n301_msgs::LslidarN301Scan& scan = sweep_data->scans[0];
+    // The first and last point in each scan is ignored, which
+    // seems to be corrupted based on the received data.
+    // TODO: The two end points should be removed directly
+    //    in the scans.
+    if (scan.points.size() == 0) return;
+    // continue;
+    size_t j;
+    for (j = 1; j < scan.points.size()-1; ++j) {
 
-            VPoint point;
-            point.timestamp = timestamp - (scan.points.size()-1 - j)*0.05;
-            point.x = scan.points[j].x;
-            point.y = scan.points[j].y;
-            point.z = scan.points[j].z;
-            point.intensity = scan.points[j].intensity;
-            point_cloud->points.push_back(point);
-            ++point_cloud->width;
-        }
-
+        VPoint point;
+        point.timestamp = timestamp - (scan.points.size()-1 - j)*0.05;
+        point.x = scan.points[j].x;
+        point.y = scan.points[j].y;
+        point.z = 0;//scan.points[j].z;
+        point.intensity = scan.points[j].intensity;
+        point_cloud->points.push_back(point);
+        ++point_cloud->width;
     }
+
+    // }
 
     //  	if(point_cloud->width > 2000)
     {
