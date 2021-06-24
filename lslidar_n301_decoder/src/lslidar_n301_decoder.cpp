@@ -155,6 +155,7 @@ void LslidarN301Decoder::publishPointCloud() {
     for (j = 1; j < scan.points.size()-1; ++j) {
 
         VPoint point;
+        if(scan.points[j].x < 0) continue;
         point.timestamp = timestamp - (scan.points.size()-1 - j)*0.05;
         point.x = scan.points[j].x;
         point.y = scan.points[j].y;
